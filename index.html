@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -34,12 +33,11 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
         table {
-            font-size: 12px;
+            font-size: 14px;
         }
         table thead th {
             background: linear-gradient(135deg, #5a60ea, #7d3cf1) !important;
-            color: white !important;
-            font-size: 12px;
+            color: white !important;font-size: 20px;
         }
         #loadingBox {
             animation: fadein 0.5s;
@@ -52,23 +50,22 @@
 </head>
 <body>
 
-<!-- SECTION 1 -->
+<!-- TITLE -->
 <div class="container mt-4">
     <div class="text-center mb-4">
         <h1 class="fw-bold text-primary">Data Donasi Bencana Sumatera</h1>
-        <p class="text-secondary">Update laporan donasi terkini dari masyarakat.</p>
+        <p class="text-secondary">Update laporan donasi Update </p>
     </div>
 </div>
 
-<!-- SECTION 2 - DASHBOARD -->
+<!-- DASHBOARD -->
 <div class="container mb-5">
     <div class="row g-4">
-
         <div class="col-md-6">
             <div class="dashboard-card d-flex align-items-center">
                 <i class="bi bi-cash-coin"></i>
                 <div>
-                    <h5>Total Donasi</h5>
+                    <h1>Total Donasi</h1>
                     <h3 id="totalDonasi">Rp 0</h3>
                 </div>
             </div>
@@ -78,16 +75,15 @@
             <div class="dashboard-card d-flex align-items-center">
                 <i class="bi bi-people-fill"></i>
                 <div>
-                    <h5>Total Donatur</h5>
+                    <h1>Total Donatur</h1>
                     <h3 id="totalDonatur">0</h3>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
-<!-- SECTION 3 - LOADING ANIMATION -->
+<!-- LOADING -->
 <div class="container">
     <div id="loadingBox" class="text-center my-5">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
@@ -95,100 +91,97 @@
     </div>
 </div>
 
-<!-- SECTION 3 - TABEL 3 KOLOM -->
+<!-- TABEL TUNGGAL -->
 <div class="container mb-5">
-    <h3 class="mb-3 text-primary">Daftar Donatur</h3>
+    <h1 class="mb-3 text-primary fw-bold">Daftar Donatur</h1>
 
-    <div class="row g-4">
+    <div class="table-box">
+        <table class="table table-striped table-sm" id="donasiTable">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Jumlah Donasi</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
 
-        <div class="col-md-4">
-            <div class="table-box">
-                <table class="table table-striped table-sm">
-                    <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Jumlah Donasi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="col1"></tbody>
-                </table>
-            </div>
+        <!-- PAGINATION -->
+        <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary btn-sm" id="prevBtn">Prev</button>
+            <span id="pageInfo" class="fw-bold"></span>
+            <button class="btn btn-primary btn-sm" id="nextBtn">Next</button>
         </div>
-
-        <div class="col-md-4">
-            <div class="table-box">
-                <table class="table table-striped table-sm">
-                    <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Jumlah Donasi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="col2"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="table-box">
-                <table class="table table-striped table-sm">
-                    <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Jumlah Donasi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="col3"></tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
 </div>
 
 <script>
-    const url = "https://script.google.com/macros/s/AKfycbxqnAFR3trk0Iib_40-Wda4x-lmUvQoqNUGxT8QXIw1El-acyy3Uih3d4bPSyApSC8DUQ/exec";
+const url = "https://script.google.com/macros/s/AKfycbxqnAFR3trk0Iib_40-Wda4x-lmUvQoqNUGxT8QXIw1El-acyy3Uih3d4bPSyApSC8DUQ/exec";
 
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
+let allData = [];
+let currentPage = 1;
+const rowsPerPage = 25;
 
-            // UPDATE DASHBOARD
-            document.getElementById("totalDonasi").textContent = 
-                "Rp " + data.totalDonasi.toLocaleString();
+// Render tabel berdasarkan halaman
+function renderPage() {
+    const tableBody = document.getElementById("tableBody");
+    tableBody.innerHTML = "";
 
-            document.getElementById("totalDonatur").textContent = 
-                data.totalDonatur;
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const sliced = allData.slice(start, end);
 
-            // SPLIT DATA MENJADI 3 KOLOM
-            const chunkSize = Math.ceil(data.tabel.length / 3);
-            const col1 = data.tabel.slice(0, chunkSize);
-            const col2 = data.tabel.slice(chunkSize, chunkSize * 2);
-            const col3 = data.tabel.slice(chunkSize * 2);
+    sliced.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${row[0]}</td>
+            <td>Rp ${Number(row[1]).toLocaleString()}</td>
+        `;
+        tableBody.appendChild(tr);
+    });
 
-            function renderTable(dataArr, elementId) {
-                const body = document.getElementById(elementId);
-                dataArr.forEach(row => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${row[0]}</td>
-                        <td>Rp ${Number(row[1]).toLocaleString()}</td>
-                    `;
-                    body.appendChild(tr);
-                });
-            }
+    document.getElementById("pageInfo").textContent =
+        `Halaman ${currentPage} / ${Math.ceil(allData.length / rowsPerPage)}`;
 
-            renderTable(col1, "col1");
-            renderTable(col2, "col2");
-            renderTable(col3, "col3");
+    document.getElementById("prevBtn").disabled = currentPage === 1;
+    document.getElementById("nextBtn").disabled = end >= allData.length;
+}
 
-            // >>> HILANGKAN LOADING <<<
-            document.getElementById("loadingBox").style.display = "none";
-        });
+document.getElementById("prevBtn").onclick = () => {
+    if (currentPage > 1) {
+        currentPage--;
+        renderPage();
+    }
+};
+document.getElementById("nextBtn").onclick = () => {
+    if ((currentPage * rowsPerPage) < allData.length) {
+        currentPage++;
+        renderPage();
+    }
+};
+
+// FETCH DATA
+fetch(url)
+    .then(res => res.json())
+    .then(data => {
+
+        // UPDATE DASHBOARD
+        document.getElementById("totalDonasi").textContent =
+            "Rp " + data.totalDonasi.toLocaleString();
+
+        document.getElementById("totalDonatur").textContent = data.totalDonatur;
+
+        // SIMPAN DATA TABEL
+        allData = data.tabel;
+
+        // Render halaman pertama
+        renderPage();
+
+        // HILANGKAN LOADING
+        document.getElementById("loadingBox").style.display = "none";
+    });
+
 </script>
-
-<!-- BOOTSTRAP JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
