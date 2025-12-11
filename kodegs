@@ -1,0 +1,21 @@
+function doGet() {
+  const sheet = SpreadsheetApp.getActive().getSheetByName("sheet1");
+  const data = sheet.getDataRange().getValues();
+  
+  // Buang header
+  const rows = data.slice(1);
+  
+  // Hitung total donasi & total donatur
+  const totalDonasi = rows.reduce((sum, row) => sum + Number(row[1]), 0);
+  const totalDonatur = rows.length;
+  
+  const output = {
+    totalDonasi: totalDonasi,
+    totalDonatur: totalDonatur,
+    tabel: rows
+  };
+
+  return ContentService
+    .createTextOutput(JSON.stringify(output))
+    .setMimeType(ContentService.MimeType.JSON);
+}
