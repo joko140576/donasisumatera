@@ -96,6 +96,36 @@
                 font-size: 22px;
             }
         }
+
+        .table-box, 
+            .table-box * {
+                display: none !important;
+            }
+
+         /* SEMBUNYIKAN DAFTAR DONATUR & TABEL */
+        .hide-section {
+            display: none !important;
+        }
+
+        /* DASHBOARD BOX SELALU VERTIKAL */
+        @media (min-width: 0px) {
+            .row.g-4 {
+                flex-direction: column !important;
+            }
+        }
+
+   
+        /* DASHBOARD BOX SELALU VERTIKAL & TENGAH */
+        .row.g-4 {
+            flex-direction: column !important;
+            align-items: center !important; /* supaya card tepat di tengah */
+        }
+        .row.g-4 > div {
+            width: 100%;
+            max-width: 600px;  /* supaya ukuran card tidak terlalu melebar */
+}
+
+
     </style>
 </head>
 <body>
@@ -133,6 +163,12 @@
     </div>
 </div>
 
+
+<div class="text-center mb-4 py-2">
+        <h1 class="fw-bold text-info">Terimakasih atas Donasi nya</h1>
+        <p class="text-secondary fs-4">Semoga Tuhan YME membalas semua kebaikan anda</p>
+    </div>
+
 <!-- LOADING -->
 <div class="container-fluid px-3">
     <div id="loadingBox" class="text-center my-5">
@@ -142,7 +178,7 @@
 </div>
 
 <!-- TABLE -->
-<div class="container-fluid px-3 mb-5">
+<div class="container-fluid px-3 mb-5 hide-section">
     <h1 class="mb-3 text-primary fw-bold py-2">Daftar Donatur</h1>
 
     <div class="table-box">
